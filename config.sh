@@ -2,7 +2,7 @@
 start=`date +%s`
 
 
-vina --config conf.txt --log log.txt
+vina.exe --config conf.txt --log log.txt
 
 
 end=`date +%s`
