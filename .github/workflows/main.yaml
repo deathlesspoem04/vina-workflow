@@ -25,7 +25,7 @@ jobs:
       
     # Runs the main script script
     - name: Run script
-      run: sh ./config.sh
+      run: ./vina.exe --config conf.txt --log log.txt
       
     - name: Commit files
       id: commit
