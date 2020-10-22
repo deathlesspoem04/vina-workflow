@@ -1,0 +1,47 @@
+name: CI run
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    timeout-minutes: 50
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: update packages
+      run: |
+        sudo apt update
+        sudo apt-get upgrade
+    
+    # set up gcc
+    - name: install gcc
+      run: sudo apt-get install gcc
+      
+    # Runs the main script script
+    - name: Run script
+      run: sh ./config.sh
+      
+    - name: Commit files
+      id: commit
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "github-actions"
+        git add --all
+        if [ -z "$(git status --porcelain)" ]; then
+           echo "::set-output name=push::false"
+        else
+           git commit -m "Add changes"
+           echo "::set-output name=push::true"
+        fi
+      shell: bash
+    - name: Push changes
+      if: steps.commit.outputs.push == 'true'
+      uses: ad-m/github-push-action@master
+      with:
+         github_token: ${{ secrets.GITHUB_TOKEN }}
